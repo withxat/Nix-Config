@@ -8,15 +8,17 @@
     disko.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, disko, ... }: {
+  outputs = { self, nixpkgs, disko, ... }: {
     nixosConfigurations.oyama = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-
       modules = [
-	disko.nixosModules.disko
-	./hosts/oyama/disko.nix
+        disko.nixosModules.disko
+        ./hosts/oyama/disko.nix
         ./hosts/oyama/configuration.nix
       ];
     };
+
+    packages.x86_64-linux.image =
+      self.nixosConfigurations.oyama.config.system.build.diskoImages;
   };
 }
