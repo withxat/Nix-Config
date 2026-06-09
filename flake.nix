@@ -6,7 +6,7 @@
   };
 
   outputs = { self, nixpkgs, ... }: {
-    nixosConfigurations.misaka = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.oyama = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
 
       modules = [
