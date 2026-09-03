@@ -11,6 +11,14 @@
 
   zramSwap.enable = true;
 
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 4096;
+      priority = 0;
+    }
+  ];
+
   services.openssh = {
     enable = true;
     settings = {
