@@ -9,6 +9,19 @@
   system.stateVersion = "26.05";
 
   networking.hostName = "ricardo";
+  networking.useDHCP = false;
+  networking.useNetworkd = true;
+
+  systemd.network.networks."10-uplink" = {
+    matchConfig.MACAddress = "00:0d:a3:34:3c:eb";
+    address = [ "207.2.122.137/24" ];
+    gateway = [ "207.2.122.1" ];
+    dns = [
+      "8.8.8.8"
+      "8.8.4.4"
+    ];
+    networkConfig.DHCP = "no";
+  };
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
