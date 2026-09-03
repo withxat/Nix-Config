@@ -8,17 +8,23 @@
     disko.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, disko, ... }: {
-    nixosConfigurations.oyama = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        disko.nixosModules.disko
-        ./hosts/oyama/disko.nix
-        ./hosts/oyama/configuration.nix
-      ];
-    };
+  outputs =
+    {
+      self,
+      nixpkgs,
+      disko,
+      ...
+    }:
+    {
+      nixosConfigurations.ricardo = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          disko.nixosModules.disko
+          ./hosts/ricardo/disko.nix
+          ./hosts/ricardo/configuration.nix
+        ];
+      };
 
-    packages.x86_64-linux.image =
-      self.nixosConfigurations.oyama.config.system.build.diskoImages;
-  };
+      packages.x86_64-linux.image = self.nixosConfigurations.ricardo.config.system.build.diskoImages;
+    };
 }

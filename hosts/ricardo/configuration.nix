@@ -1,14 +1,13 @@
-{ pkgs, ... }:
+{ modulesPath, pkgs, ... }:
 
 {
+  imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
+
   system.stateVersion = "26.05";
 
-  networking.hostName = "oyama";
+  networking.hostName = "ricardo";
 
-  boot.loader.grub = {
-    enable = true;
-    device = "/dev/vda";
-  };
+  boot.loader.grub.enable = true;
 
   zramSwap.enable = true;
 
