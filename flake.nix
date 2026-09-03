@@ -10,7 +10,6 @@
 
   outputs =
     {
-      self,
       nixpkgs,
       disko,
       ...
@@ -24,7 +23,5 @@
           ./hosts/ricardo/configuration.nix
         ];
       };
-
-      packages.x86_64-linux.image = self.nixosConfigurations.ricardo.config.system.build.diskoImages;
     };
 }

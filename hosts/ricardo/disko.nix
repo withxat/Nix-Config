@@ -3,7 +3,6 @@
     disk.vda = {
       type = "disk";
       device = "/dev/vda";
-      imageSize = "8G";
 
       content = {
         type = "gpt";
