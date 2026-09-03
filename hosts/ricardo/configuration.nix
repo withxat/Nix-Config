@@ -1,13 +1,20 @@
 { modulesPath, pkgs, ... }:
 
 {
-  imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
+  imports = [
+    ./hardware-configuration.nix
+    (modulesPath + "/profiles/qemu-guest.nix")
+  ];
 
   system.stateVersion = "26.05";
 
   networking.hostName = "ricardo";
 
-  boot.loader.grub.enable = true;
+  boot.loader.grub = {
+    enable = true;
+    # Verify the disk name in the installer before installing GRUB.
+    device = "/dev/vda";
+  };
 
   zramSwap.enable = true;
 
@@ -36,6 +43,27 @@
   };
 
   security.sudo.wheelNeedsPassword = false;
+
+  virtualisation.docker = {
+    enable = true;
+    logDriver = "local";
+    daemon.settings = {
+      # Publish ports on loopback unless a service explicitly selects a public address.
+      ip = "127.0.0.1";
+      default-network-opts.bridge."com.docker.network.bridge.host_binding_ipv4" = "127.0.0.1";
+    };
+  };
+
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
+
+  nix.optimise = {
+    automatic = true;
+    dates = [ "Sun 04:00" ];
+  };
 
   nix.settings.experimental-features = [
     "nix-command"
