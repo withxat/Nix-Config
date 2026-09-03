@@ -4,12 +4,15 @@
 ## Ricardo 安装
 
 使用官方 NixOS 26.05 minimal x86_64 ISO 启动，手动分区后通过 Flake 安装。
-启动方式已确认为 BIOS；GRUB 暂沿用 `/dev/vda`，需要在安装环境核对盘符。
+先在服务器控制面板切换到 UEFI，并重新从 ISO 启动，使用 systemd-boot 引导。
+当前配置未设置 Secure Boot 签名，Secure Boot 保持关闭。
+文件系统使用标签定位，不绑定 `/dev/vda`；手动分区前仍需要核对实际盘符。
 网络目前使用 NixOS 默认的 DHCP，是否适用于这台服务器也需要核实。
 
-在安装环境运行以下只读命令，确认磁盘、地址、路由和 DHCP 租约：
+在安装环境运行以下只读命令，确认 UEFI 启动、磁盘、地址、路由和 DHCP 租约：
 
 ```sh
+if [ -d /sys/firmware/efi ]; then echo UEFI; else echo BIOS; fi
 lsblk -o NAME,PATH,SIZE,TYPE,FSTYPE,MOUNTPOINTS
 ip -br address
 ip -4 route
@@ -17,17 +20,26 @@ ip -6 route
 sudo journalctl -b --no-pager -u dhcpcd -u NetworkManager -u systemd-networkd -n 60
 ```
 
-分区约定为 GPT：1 MiB BIOS 引导分区（EF02），剩余空间为 ext4 根分区，
-文件系统标签为 `nixos`。4 GiB swap 文件由 NixOS 创建，无需单独的 swap 分区。
+第一条必须输出 `UEFI` 后再继续安装。
+
+分区表使用 GPT，分区约定如下：
+
+| 分区 | 大小 | 格式 / 标签 | 挂载点 |
+| --- | --- | --- | --- |
+| EFI System Partition（EF00） | 1 GiB | FAT32 / `BOOT` | `/boot` |
+| 根分区 | 剩余空间 | ext4 / `nixos` | `/` |
+
+4 GiB swap 文件由 NixOS 创建，无需单独的 swap 分区。
 
 `hosts/ricardo/hardware-configuration.nix` 目前仅描述这个安装约定，并非硬件扫描结果。
-确认盘符，完成分区、格式化并把目标根分区挂载到 `/mnt` 后，在仓库根目录运行：
+确认盘符并完成分区、格式化后，先将根分区挂载到 `/mnt`，再将 EFI 分区挂载到
+`/mnt/boot`。两个分区都挂载好后，在仓库根目录运行：
 
 ```sh
 sudo nixos-generate-config --root /mnt --show-hardware-config > hosts/ricardo/hardware-configuration.nix
 ```
 
-核对生成的硬件配置、GRUB 目标盘和网络配置后，将硬件配置纳入 Git，安装：
+核对生成的硬件配置中包含 `/` 和 `/boot`，并确认网络配置后，将硬件配置纳入 Git，安装：
 
 ```sh
 git add hosts/ricardo/hardware-configuration.nix

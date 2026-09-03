@@ -10,11 +10,8 @@
 
   networking.hostName = "ricardo";
 
-  boot.loader.grub = {
-    enable = true;
-    # Verify the disk name in the installer before installing GRUB.
-    device = "/dev/vda";
-  };
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   zramSwap.enable = true;
 
