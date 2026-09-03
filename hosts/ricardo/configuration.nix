@@ -3,6 +3,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./sing-box.nix
   ];
 
   system.stateVersion = "26.05";

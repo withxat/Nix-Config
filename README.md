@@ -62,6 +62,21 @@ sudo nixos-install --flake .#ricardo
 
 ## Docker 与维护
 
+Ricardo 通过本仓库的 flake 运行 sing-box Shadowsocks 2022 落地，使用
+`2022-blake3-aes-128-gcm`，监听 TCP/UDP 443，流量从本机直接出口。
+Louise 保留原有 VLESS Reality 入口及客户端凭据；`xat` 的全部流量转到 Ricardo，
+包括 SSH、邮件和 `ts.net`。`royal` 用户仍直接从 Louise 出口。
+
+sing-box 凭据由 NixOS 服务启动时从以下 root 专用文件读取，不进入 Git 或 Nix store：
+
+- `/etc/sing-box/secrets/shadowsocks-password`
+
+密码为 Base64 编码的 16 字节随机密钥，与 Louise 的对应出站一致。
+重装前需单独备份该文件；目录权限为 `0700`，文件权限为 `0600`，所有者为 root。
+部署使用 `sudo nixos-rebuild switch --flake /etc/nixos#ricardo`。
+部署后运行 `sudo sing-box check -c /run/sing-box/config.json` 检查运行配置，
+并分别验证 `xat` 经 Louise 后的出口为 Ricardo、`royal` 的出口仍为 Louise。
+
 - Docker 随系统启动，使用 `sudo docker` 和 `sudo docker compose` 管理。
 - 日志使用 `local` 驱动，按 Docker 默认规则轮转和压缩。
 - 默认桥接网络及新建的自定义桥接网络，将未指定地址的发布端口绑定到 `127.0.0.1`。
