@@ -1,9 +1,8 @@
-{ modulesPath, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
     ./hardware-configuration.nix
-    (modulesPath + "/profiles/qemu-guest.nix")
   ];
 
   system.stateVersion = "26.05";

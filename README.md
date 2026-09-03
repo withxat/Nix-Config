@@ -3,10 +3,12 @@
 
 ## Ricardo 安装
 
-使用官方 NixOS 26.05 minimal x86_64 ISO 启动，手动分区后通过 Flake 安装。
+使用官方 NixOS minimal x86_64 ISO 或 netboot.xyz 中的 NixOS 安装环境启动，手动分区后通过 Flake 安装。
+安装环境版本可以与目标系统不同；本机使用 netboot.xyz 的 25.05 环境，目标版本由 `flake.lock` 锁定为 26.05。
 先在服务器控制面板切换到 UEFI，并重新从 ISO 启动，使用 systemd-boot 引导。
 当前配置未设置 Secure Boot 签名，Secure Boot 保持关闭。
-文件系统使用标签定位，不绑定 `/dev/vda`；手动分区前仍需要核对实际盘符。
+已确认本机系统盘为 `/dev/vda`（100 GiB），文件系统使用硬件扫描生成的 UUID 定位。
+重装时仍需重新核对盘符，并在格式化后重新生成硬件配置。
 网络使用 Layer 面板提供的静态 IPv4，由 systemd-networkd 按 MAC 地址匹配网卡，
 不依赖面板中的 `eth0` 名称或 DHCP。IPv6 子网尚未分配。
 
@@ -43,7 +45,7 @@ sudo journalctl -b --no-pager -u dhcpcd -u NetworkManager -u systemd-networkd -n
 
 4 GiB swap 文件由 NixOS 创建，无需单独的 swap 分区。
 
-`hosts/ricardo/hardware-configuration.nix` 目前仅描述这个安装约定，并非硬件扫描结果。
+`hosts/ricardo/hardware-configuration.nix` 已包含本机实际硬件扫描结果及文件系统 UUID。
 确认盘符并完成分区、格式化后，先将根分区挂载到 `/mnt`，再将 EFI 分区挂载到
 `/mnt/boot`。两个分区都挂载好后，在仓库根目录运行：
 
