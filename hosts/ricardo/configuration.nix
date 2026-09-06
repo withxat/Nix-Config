@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ./sing-box.nix
+    ./tailscale.nix
   ];
 
   system.stateVersion = "26.05";
