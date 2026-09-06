@@ -1,5 +1,26 @@
 {
   "nodes": {
+    "flag": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788664004,
+        "narHash": "sha256-Sl1Nxx5/WrdojPYpnuGQaSPu9h9ms21KprKbKOddkAI=",
+        "ref": "main",
+        "rev": "bc4dd82c841a40266afb241520be6f89098a3c8e",
+        "revCount": 171,
+        "type": "git",
+        "url": "ssh://git@github.com/withxat/Flag.git"
+      },
+      "original": {
+        "ref": "main",
+        "type": "git",
+        "url": "ssh://git@github.com/withxat/Flag.git"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1780902259,
@@ -18,6 +39,7 @@
     },
     "root": {
       "inputs": {
+        "flag": "flag",
         "nixpkgs": "nixpkgs"
       }
     }

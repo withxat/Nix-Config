@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ./sing-box.nix
     ./tailscale.nix
+    ./flag.nix
   ];
 
   system.stateVersion = "26.05";

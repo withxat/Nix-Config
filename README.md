@@ -95,3 +95,46 @@ nix flake check --all-systems --no-build
 ```
 
 该检查验证配置求值，不代表已经在服务器启动或运行过容器。
+
+## Flag 私有服务
+
+Flag 通过私有仓库的 flake 构建，版本固定在本仓库的 `flake.lock`，由
+`services.flag` 和 systemd 管理。访问地址为 `https://ricardo.tail3921e8.ts.net:8443`，
+使用 Tailscale Serve 提供私有 HTTPS。应用只监听 `127.0.0.1:8787`，不开放公网端口。
+现有 sing-box 链路也可以访问这个地址，前提是客户端将该域名交给 `xat` 的代理线路。
+
+Louise 是共享代理，也是 tailnet 节点。将 `hosts/louise/flag-access.json` 的 DNS server
+合入其现有配置，将其中的两条 route rules 放在原规则之前，保留原有入站、凭据和出站。
+这会先解析非 `xat` 用户的 8443 目标，再按 Flag 域名及 tailnet IPv4/IPv6 拒绝访问，
+避免通过别名绕过限制。`royal` 的其他流量仍按原规则直接从 Louise 出口。
+该文件是无密钥的配置片段，不能直接覆盖 `/etc/sing-box/config.json`；合并后先运行
+`sing-box check`，备份旧配置，再重启并验证两个账号的访问与出口。
+
+个人 SQLite 数据在 `/var/lib/flag`（systemd 的 `/var/lib/private/flag`），旧目录的三个
+DuckDB 文件在 `/var/lib/flag-catalog/releases/<version>`，由 `current` 链接同时选择。
+更新应用时不覆盖这些数据。密钥由 root 的 `/etc/flag/environment` 提供，权限 `0600`，
+不进入 Git 或 Nix store。
+
+在有私有仓库读取权限的机器更新应用，然后先把锁定的源码归档到服务器；服务器无需持有
+GitHub 私钥或 token：
+
+```sh
+nix flake update flag
+nix flake check --all-systems --no-build
+nix flake archive --to ssh://ricardo
+```
+
+提交并同步本仓库后，在 Ricardo 执行：
+
+```sh
+sudo nixos-rebuild switch --flake /etc/nixos#ricardo
+systemctl is-active flag flag-tailscale
+curl --fail http://127.0.0.1:8787/api/catalog/status
+curl --fail 'http://127.0.0.1:8787/api/movies?query=NGOD-229&limit=1'
+systemctl show flag -p MemoryCurrent -p NRestarts
+tailscale serve status
+```
+
+除目录 `ready:true` 和非空搜索外，仍需从设备验证实际 HTTPS、代理路径、图片和旧片单。
+系统回滚使用 `sudo nixos-rebuild switch --rollback`，只回滚应用和配置，不回滚个人数据库；
+涉及数据库迁移的更新应先执行一致性备份。

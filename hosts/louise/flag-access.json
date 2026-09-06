@@ -1,0 +1,34 @@
+{
+  "dns": {
+    "servers": [
+      { "type": "local", "tag": "flag-local" }
+    ]
+  },
+  "route": {
+    "rules": [
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          { "auth_user": ["xat"], "invert": true },
+          { "port": [8443] }
+        ],
+        "action": "resolve",
+        "server": "flag-local"
+      },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          { "auth_user": ["xat"], "invert": true },
+          {
+            "port": [8443],
+            "domain": ["ricardo.tail3921e8.ts.net"],
+            "ip_cidr": ["100.96.76.2/32", "fd7a:115c:a1e0::3538:4c04/128"]
+          }
+        ],
+        "action": "reject"
+      }
+    ]
+  }
+}
