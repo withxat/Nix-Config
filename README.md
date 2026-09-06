@@ -132,7 +132,7 @@ systemctl is-active flag flag-tailscale
 curl --fail http://127.0.0.1:8787/api/catalog/status
 curl --fail 'http://127.0.0.1:8787/api/movies?query=NGOD-229&limit=1'
 systemctl show flag -p MemoryCurrent -p NRestarts
-tailscale serve status
+sudo tailscale serve status --json
 ```
 
 除目录 `ready:true` 和非空搜索外，仍需从设备验证实际 HTTPS、代理路径、图片和旧片单。
