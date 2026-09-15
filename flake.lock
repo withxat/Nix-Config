@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789462226,
-        "narHash": "sha256-h8FhG4bCgRa22Ir2Pp32AH4MxCpNVFr4YsaQ5qzDWy8=",
+        "lastModified": 1789464241,
+        "narHash": "sha256-dZtqzxnLiIhfZySowyQ+QHoDfytwGx3F6r+ahh0wtSg=",
         "ref": "main",
-        "rev": "75dbcb1ebe098173d891752f732fafa02022582d",
-        "revCount": 266,
+        "rev": "ccbfb4763757d7e6af63aff6e780ac1faf9fcafb",
+        "revCount": 267,
         "type": "git",
         "url": "ssh://git@github.com/withxat/Flag.git"
       },
